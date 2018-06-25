@@ -61,6 +61,15 @@ namespace StandardizedQR {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Validation for {0} failed..
+        /// </summary>
+        internal static string CompositeValidationFailed {
+            get {
+                return ResourceManager.GetString("CompositeValidationFailed", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to If Tip or Convenience Indicator is set to 2, Value of Convenience Fee Fixed is required. .
         /// </summary>
         internal static string IfTipOrConvenienceIndicator2ThenDependencyRequired {

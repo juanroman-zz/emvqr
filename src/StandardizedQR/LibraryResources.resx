@@ -117,6 +117,9 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="CompositeValidationFailed" xml:space="preserve">
+    <value>Validation for {0} failed.</value>
+  </data>
   <data name="IfTipOrConvenienceIndicator2ThenDependencyRequired" xml:space="preserve">
     <value>If Tip or Convenience Indicator is set to 2, Value of Convenience Fee Fixed is required. </value>
   </data>

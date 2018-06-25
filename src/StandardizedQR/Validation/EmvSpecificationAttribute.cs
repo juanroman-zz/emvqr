@@ -2,16 +2,34 @@
 
 namespace StandardizedQR.Validation
 {
+    /// <summary>
+    /// Defines metadata for the EMV(R) Co QR Code Specification.
+    /// </summary>
     [AttributeUsage(AttributeTargets.Property, Inherited = false, AllowMultiple = false)]
     public sealed class EmvSpecificationAttribute : Attribute
     {
+        /// <summary>
+        /// Initializes a new instance of the <see cref="EmvSpecificationAttribute"/> attribute with a unique identifier.
+        /// </summary>
+        /// <param name="id">The value to set in the <see cref="Id"/> property.</param>
         public EmvSpecificationAttribute(int id)
         {
             Id = id;
         }
 
+        /// <summary>
+        /// The ID is coded as a two-digit numeric value, with a value ranging from "00" to "99".
+        /// </summary>
         public int Id { get; }
 
-        public int Length { get; set; }
+        /// <summary>
+        /// The length is coded as a two-digit numeric value, with a value ranging from "01" to "99".
+        /// </summary>
+        public int MaxLength { get; set; }
+
+        /// <summary>
+        /// Indicates if the node represents a root element.
+        /// </summary>
+        public bool IsRootElement { get; set; }
     }
 }
