@@ -17,6 +17,7 @@ build_script:
   - cmd: dotnet build ./src/StandardizedQR/StandardizedQR.csproj
 after_build:
   # For once the build has completed
+  - cmd: dotnet pack ./src/StandardizedQR/StandardizedQR.csproj
 clone_depth: 1
 test_script:
   # restore packages for our unit tests
