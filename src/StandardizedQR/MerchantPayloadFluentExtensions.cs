@@ -27,7 +27,7 @@
         public static MerchantPayload WithTipPercentage(this MerchantPayload merchantPayload, double tipPercentage)
         {
             merchantPayload.TipOrConvenienceIndicator = 3;
-            merchantPayload.ValueOfConvenienceFeePercentage = tipPercentage.ToString("P0");
+            merchantPayload.ValueOfConvenienceFeePercentage = tipPercentage.ToString("P0").Replace(" ", string.Empty);
 
             return merchantPayload;
         }
