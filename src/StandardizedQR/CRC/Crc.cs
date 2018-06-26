@@ -4,11 +4,13 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Security.Cryptography;
 using System.Text;
 
 namespace StandardizedQR.CRC
 {
+    [ExcludeFromCodeCoverage]
     public class Crc : HashAlgorithm
     {
         private readonly ulong _mask;

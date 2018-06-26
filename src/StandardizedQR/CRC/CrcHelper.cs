@@ -1,10 +1,12 @@
 ﻿/*
  * As defined in http://crccalc.com/
  */
- using System;
+using System;
+using System.Diagnostics.CodeAnalysis;
 
 namespace StandardizedQR.CRC
 {
+    [ExcludeFromCodeCoverage]
     public static class CrcHelper
     {
         #region internal

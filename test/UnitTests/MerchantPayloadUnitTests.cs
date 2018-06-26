@@ -1,7 +1,9 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+using StandardizedQR;
+using System;
 using System.Collections.Generic;
 
-namespace StandardizedQR.UnitTests
+namespace UnitTests
 {
     [TestClass]
     public class MerchantPayloadUnitTests
@@ -74,6 +76,41 @@ namespace StandardizedQR.UnitTests
                 actual: payload);
         }
 
+        [TestMethod]
+        public void PayloadWithMandatoryFields()
+        {
+            var globalUniqueIdentifier = Guid.NewGuid().ToString().Replace("-", string.Empty);
+            var merchantPayload = new MerchantPayload
+            {
+                PayloadFormatIndicator = 1,
+                MerchantAccountInformation = new MerchantAccountInformationDictionary
+                {
+                    {26, new MerchantAccountInformation { GlobalUniqueIdentifier = globalUniqueIdentifier} }
+                },
+                MerchantCategoryCode = 4111,
+                TransactionCurrency = Iso4217Currency.MexicoPeso.Value.NumericCode,
+                CountyCode = Iso3166Countries.Mexico,
+                MerchantName = "My Super Shop",
+                MerchantCity = "Mexico City",
+            };
 
+            var payload = merchantPayload.GeneratePayload();
+
+            payload = AssertThatContainsAndRemove(payload, "000201");
+            payload = AssertThatContainsAndRemove(payload, $"26360032{globalUniqueIdentifier}");
+            payload = AssertThatContainsAndRemove(payload, "52044111");
+            payload = AssertThatContainsAndRemove(payload, $"5303{Iso4217Currency.MexicoPeso.Value.NumericCode}");
+            payload = AssertThatContainsAndRemove(payload, $"5802{Iso3166Countries.Mexico}");
+            payload = AssertThatContainsAndRemove(payload, "5913My Super Shop");
+            payload = AssertThatContainsAndRemove(payload, "6011Mexico City");
+            payload = AssertThatContainsAndRemove(payload, "6304");
+            Assert.IsTrue(4 == payload.Length);
+        }
+
+        private string AssertThatContainsAndRemove(string input, string expected)
+        {
+            Assert.IsTrue(input.Contains(expected));
+            return input.Replace(expected, string.Empty);
+        }
     }
 }

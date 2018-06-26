@@ -1,8 +1,11 @@
-﻿namespace StandardizedQR
+﻿using System.Diagnostics.CodeAnalysis;
+
+namespace StandardizedQR
 {
     /// <summary>
     /// List of country codes as described in ISO 3166.
     /// </summary>
+    [ExcludeFromCodeCoverage]
     public static class Iso3166Countries
     {
         public const string Andorra = "AR";

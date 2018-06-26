@@ -85,7 +85,6 @@ namespace StandardizedQR
         [EmvSpecification(56, MaxLength = 13)]
         [MaxLength(13)]
         [RequireIso8859]
-        [ConditionalRequired(nameof(TipOrConvenienceIndicator))]
         public string ValueOfConvenienceFeeFixed { get; set; }
 
         /// <summary>
@@ -96,7 +95,6 @@ namespace StandardizedQR
         /// </example>
         [EmvSpecification(57, MaxLength = 5)]
         [RequireIso8859]
-        [ConditionalRequired(nameof(TipOrConvenienceIndicator))]
         public string ValueOfConvenienceFeePercentage { get; set; }
 
         /// <summary>
@@ -190,7 +188,7 @@ namespace StandardizedQR
                     switch (TipOrConvenienceIndicator.Value)
                     {
                         case 1:
-                            // f the mobile application should prompt the consumer to enter a tip to be paid to the merchant
+                            // The mobile application should prompt the consumer to enter a tip to be paid to the merchant
                             break;
 
                         case 2:
@@ -208,8 +206,17 @@ namespace StandardizedQR
                             break;
 
                         default:
-                            errors.Add(new ValidationResult(LibraryResources.PayloadFormatIndicatorMustBe1, new string[] { nameof(TipOrConvenienceIndicator) }));
+                            errors.Add(new ValidationResult(LibraryResources.TipOrConvenienceIndicatorMustBeBetween1and3, new string[] { nameof(TipOrConvenienceIndicator) }));
                             break;
+                    }
+                }
+
+                if (null != MerchantAccountInformation)
+                {
+                    var invalidIdentifiers = MerchantAccountInformation.Keys.Count(k => k < 26 || k > 51);
+                    if (0 < invalidIdentifiers)
+                    {
+                        errors.Add(new ValidationResult(LibraryResources.MerchantAccountInformationInvalidIdentifier, new string[] { nameof(MerchantAccountInformation) }));
                     }
                 }
 

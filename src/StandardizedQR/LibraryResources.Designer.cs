@@ -88,6 +88,15 @@ namespace StandardizedQR {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Merchant Account Information ID allocation must be between 26 and 51..
+        /// </summary>
+        internal static string MerchantAccountInformationInvalidIdentifier {
+            get {
+                return ResourceManager.GetString("MerchantAccountInformationInvalidIdentifier", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to In this version of the specification, the Payload Format Indicator has the value &quot;01&quot;..
         /// </summary>
         internal static string PayloadFormatIndicatorMustBe1 {

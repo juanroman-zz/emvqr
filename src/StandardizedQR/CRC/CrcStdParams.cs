@@ -3,6 +3,7 @@
  */
 
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 
 namespace StandardizedQR.CRC
 {
@@ -71,6 +72,7 @@ namespace StandardizedQR.CRC
         Crc15Mpt1327
     }
 
+    [ExcludeFromCodeCoverage]
     public static class CrcStdParams
     {
         public static readonly Dictionary<CrcAlgorithms, Parameters> StandartParameters = new Dictionary

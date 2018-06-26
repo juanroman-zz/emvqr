@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics.CodeAnalysis;
 
 namespace StandardizedQR
 {
@@ -8,6 +9,7 @@ namespace StandardizedQR
     /// <remarks>
     /// The list is current as of June 4, 2018.
     /// </remarks>
+    [ExcludeFromCodeCoverage]
     public class Iso4217Currency
     {
         public string Currency { get; set; }

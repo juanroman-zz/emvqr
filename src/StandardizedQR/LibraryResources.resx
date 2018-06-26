@@ -126,6 +126,9 @@
   <data name="IfTipOrConvenienceIndicator3ThenDependencyRequired" xml:space="preserve">
     <value>If Tip or Convenience Indicator is set to 2, Value of Convenience Fee Percentage is required.</value>
   </data>
+  <data name="MerchantAccountInformationInvalidIdentifier" xml:space="preserve">
+    <value>Merchant Account Information ID allocation must be between 26 and 51.</value>
+  </data>
   <data name="PayloadFormatIndicatorMustBe1" xml:space="preserve">
     <value>In this version of the specification, the Payload Format Indicator has the value "01".</value>
   </data>

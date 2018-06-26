@@ -5,8 +5,11 @@
 /* I'm not strong in English language.
  * Summary of properties taken from here http://www.csm.ornl.gov/~dunigan/crc.html */
 
+using System.Diagnostics.CodeAnalysis;
+
 namespace StandardizedQR.CRC
 {
+    [ExcludeFromCodeCoverage]
     public class Parameters
     {
         public Parameters(string name, int hashSize, ulong poly, ulong init, bool refIn, bool refOut, ulong xorOut, ulong check)
