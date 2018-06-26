@@ -11,7 +11,7 @@ using System.Text;
 
 namespace StandardizedQR
 {
-    public class MerchantPayload : IValidatableObject
+    public partial class MerchantPayload : IValidatableObject
     {
         private bool _validating;
 
@@ -332,16 +332,6 @@ namespace StandardizedQR
             sb.Append(crc.ToHex(true).GetLast(4));
 
             return sb.ToString();
-        }
-
-        public static string ToHex(byte[] bytes, bool upperCase)
-        {
-            StringBuilder result = new StringBuilder(bytes.Length * 2);
-
-            for (int i = 0; i < bytes.Length; i++)
-                result.Append(bytes[i].ToString(upperCase ? "X2" : "x2"));
-
-            return result.ToString();
         }
 
         private string EncodeProperty<T>(string propertyName, T propertyValue)

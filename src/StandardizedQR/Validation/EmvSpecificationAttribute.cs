@@ -26,10 +26,5 @@ namespace StandardizedQR.Validation
         /// The length is coded as a two-digit numeric value, with a value ranging from "01" to "99".
         /// </summary>
         public int MaxLength { get; set; }
-
-        /// <summary>
-        /// Indicates if the node represents a root element.
-        /// </summary>
-        public bool IsRootElement { get; set; }
     }
 }
