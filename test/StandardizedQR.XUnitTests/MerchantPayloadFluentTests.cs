@@ -182,5 +182,67 @@ namespace StandardizedQR.XUnitTests
             payload = AssertUtils.AssertThatContainsAndRemove(payload, "6304");
             Assert.True(4 == payload.Length);
         }
+
+        [Fact]
+        public void WithAdditionalData()
+        {
+            var globalUniqueIdentifier = Guid.NewGuid().ToString().Replace("-", string.Empty);
+
+            var merchantPayload = MerchantPayload.CreateStatic(
+                globalUniqueIdentifier,
+                4111,
+                Iso4217Currency.MexicoPeso.Value.NumericCode,
+                Iso3166Countries.Mexico,
+                "My Super Shop",
+                "Mexico City")
+                .WithAdditionalData(terminalLabel: "5512341234");
+
+            var payload = merchantPayload.GeneratePayload();
+
+            payload = AssertUtils.AssertThatContainsAndRemove(payload, "000201");
+            payload = AssertUtils.AssertThatContainsAndRemove(payload, "010211"); // static
+            payload = AssertUtils.AssertThatContainsAndRemove(payload, $"26360032{globalUniqueIdentifier}");
+            payload = AssertUtils.AssertThatContainsAndRemove(payload, "52044111");
+            payload = AssertUtils.AssertThatContainsAndRemove(payload, $"5303{Iso4217Currency.MexicoPeso.Value.NumericCode}");
+            payload = AssertUtils.AssertThatContainsAndRemove(payload, $"5802{Iso3166Countries.Mexico}");
+            payload = AssertUtils.AssertThatContainsAndRemove(payload, "5913My Super Shop");
+            payload = AssertUtils.AssertThatContainsAndRemove(payload, "6011Mexico City");
+            payload = AssertUtils.AssertThatContainsAndRemove(payload, "6214");
+            payload = AssertUtils.AssertThatContainsAndRemove(payload, "07105512341234");
+            payload = AssertUtils.AssertThatContainsAndRemove(payload, "6304");
+            Assert.True(4 == payload.Length);
+        }
+
+        [Fact]
+        public void StaticWithAlternateLanguage()
+        {
+            var globalUniqueIdentifier = Guid.NewGuid().ToString().Replace("-", string.Empty);
+
+            var merchantPayload = MerchantPayload.CreateStatic(
+                globalUniqueIdentifier,
+                4111,
+                Iso4217Currency.MexicoPeso.Value.NumericCode,
+                Iso3166Countries.Mexico,
+                "My Super Shop",
+                "Mexico City")
+                .WithAlternateLanguage("ZH", "最佳运输", "北京");
+
+            var payload = merchantPayload.GeneratePayload();
+
+            payload = AssertUtils.AssertThatContainsAndRemove(payload, "000201");
+            payload = AssertUtils.AssertThatContainsAndRemove(payload, "010211"); // static
+            payload = AssertUtils.AssertThatContainsAndRemove(payload, $"26360032{globalUniqueIdentifier}");
+            payload = AssertUtils.AssertThatContainsAndRemove(payload, "52044111");
+            payload = AssertUtils.AssertThatContainsAndRemove(payload, $"5303{Iso4217Currency.MexicoPeso.Value.NumericCode}");
+            payload = AssertUtils.AssertThatContainsAndRemove(payload, $"5802{Iso3166Countries.Mexico}");
+            payload = AssertUtils.AssertThatContainsAndRemove(payload, "5913My Super Shop");
+            payload = AssertUtils.AssertThatContainsAndRemove(payload, "6011Mexico City");
+            payload = AssertUtils.AssertThatContainsAndRemove(payload, "6420");
+            payload = AssertUtils.AssertThatContainsAndRemove(payload, "0002ZH");
+            payload = AssertUtils.AssertThatContainsAndRemove(payload, "0104最佳运输");
+            payload = AssertUtils.AssertThatContainsAndRemove(payload, "0202北京");
+            payload = AssertUtils.AssertThatContainsAndRemove(payload, "6304");
+            Assert.True(4 == payload.Length);
+        }
     }
 }

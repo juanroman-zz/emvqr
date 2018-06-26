@@ -31,5 +31,45 @@
 
             return merchantPayload;
         }
+
+        public static MerchantPayload WithAdditionalData(this MerchantPayload merchantPayload,
+            string billNumber = null,
+            string mobileNumber = null,
+            string storeLabel = null,
+            string loyaltyNumber = null,
+            string referenceLabel = null,
+            string terminalLabel = null,
+            string purposeOfTransaction = null,
+            string additionalConsumerDataRequest = null,
+            string customerLabel = null)
+        {
+            merchantPayload.AdditionalData = new MerchantAdditionalData
+            {
+                AdditionalConsumerDataRequest = additionalConsumerDataRequest,
+                BillNumber = billNumber,
+                CustomerLabel = customerLabel,
+                LoyaltyNumber = loyaltyNumber,
+                MobileNumber = mobileNumber,
+                PurposeOfTransaction = purposeOfTransaction,
+                ReferenceLabel = referenceLabel,
+                StoreLabel = storeLabel,
+                TerminalLabel = terminalLabel
+            };
+
+            return merchantPayload;
+        }
+
+
+        public static MerchantPayload WithAlternateLanguage(this MerchantPayload merchantPayload, string languagePreference, string merchantName, string merchantCity = null)
+        {
+            merchantPayload.MerchantInformation = new MerchantInfoLanguageTemplate
+            {
+                LanguagePreference = languagePreference,
+                MerchantCityAlternateLanguage = merchantCity,
+                MerchantNameAlternateLanguage = merchantName
+            };
+
+            return merchantPayload;
+        }
     }
 }
