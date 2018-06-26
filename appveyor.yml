@@ -8,15 +8,24 @@ init:
   - cmd: git config --global core.autocrlf true
 install:
   # Install repo specific stuff here
+dotnet_csproj:
+  patch: true
+  file: '**\*.csproj'
+  version: '{version}'
+  package_version: '{version}'
+  assembly_version: '{version}'
+  file_version: '{version}'
+  informational_version: '{version}'
 before_build:
   # Display .NET Core version
   - cmd: dotnet --version
   # Display minimal restore text
   - cmd: dotnet restore ./src/StandardizedQR/StandardizedQR.csproj --verbosity m
 build_script:
-  - cmd: dotnet build ./src/StandardizedQR/StandardizedQR.csproj
+  - cmd: dotnet build ./src/StandardizedQR/StandardizedQR.csproj 
 after_build:
   # For once the build has completed
+  - cmd: dotnet pack ./src/StandardizedQR/StandardizedQR.csproj /p:Version=%APPVEYOR_BUILD_VERSION%
 clone_depth: 1
 test_script:
   # restore packages for our unit tests
@@ -26,4 +35,7 @@ test_script:
   - cmd: dotnet test
 on_finish :
   # any cleanup in here
+artifacts:
+  # pushing all *.nupkg files in build directory recursively
+  - path: '**\*.nupkg'
 deploy: off
