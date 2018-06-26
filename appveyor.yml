@@ -35,4 +35,7 @@ test_script:
   - cmd: dotnet test
 on_finish :
   # any cleanup in here
+artifacts:
+  # pushing all *.nupkg files in build directory recursively
+  - path: '**\*.nupkg'
 deploy: off
