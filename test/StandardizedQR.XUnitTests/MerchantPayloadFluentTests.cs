@@ -11,12 +11,12 @@ namespace StandardizedQR.XUnitTests
             var globalUniqueIdentifier = Guid.NewGuid().ToString().Replace("-", string.Empty);
 
             var merchantPayload = MerchantPayload.CreateStatic(
-                globalUniqueIdentifier,
-                4111,
-                Iso4217Currency.MexicoPeso.Value.NumericCode,
-                Iso3166Countries.Mexico,
-                "My Super Shop",
-                "Mexico City");
+                merchantGlobalUniqueIdentifier: globalUniqueIdentifier,
+                merchantCategoryCode: 4111,
+                transactionCurrencyNumericCode: Iso4217Currency.MexicoPeso.Value.NumericCode,
+                countryCode: Iso3166Countries.Mexico,
+                merchantName: "My Super Shop",
+                merchantCity: "Mexico City");
 
             var payload = merchantPayload.GeneratePayload();
 

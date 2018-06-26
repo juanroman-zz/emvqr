@@ -1,4 +1,5 @@
-﻿using System.Text;
+﻿using System.Reflection;
+using System.Text;
 
 namespace StandardizedQR.Utils
 {
@@ -38,6 +39,22 @@ namespace StandardizedQR.Utils
             }
 
             return input.Substring(input.Length - tailLength);
+        }
+
+        public static void SetAndCastValue(this PropertyInfo property, object obj, string value)
+        {
+            if (property.PropertyType.IsAssignableFrom(typeof(int)))
+            {
+                property.SetValue(obj, int.Parse(value));
+            }
+            else if (property.PropertyType.IsAssignableFrom(typeof(decimal)))
+            {
+                property.SetValue(obj, decimal.Parse(value));
+            }
+            else
+            {
+                property.SetValue(obj, value);
+            }
         }
     }
 }

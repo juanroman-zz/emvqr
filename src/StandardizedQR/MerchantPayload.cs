@@ -1,12 +1,9 @@
-﻿using StandardizedQR.CRC;
-using StandardizedQR.Utils;
+﻿using StandardizedQR.Services.Encoding;
 using StandardizedQR.Validation;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using System.Globalization;
 using System.Linq;
-using System.Reflection;
 using System.Text;
 
 namespace StandardizedQR
@@ -43,6 +40,7 @@ namespace StandardizedQR
         /// <remarks>
         /// The format and value are unique and specific to a payment system and several values may be included in the QR Code
         /// </remarks>
+        [EmvSpecification(id: 29, IsParent = true)]
         [ValidateObject]
         public MerchantAccountInformationDictionary MerchantAccountInformation { get; set; }
 
@@ -135,14 +133,14 @@ namespace StandardizedQR
         [RequireIso8859]
         public string PostalCode { get; set; }
 
-        [EmvSpecification(62)]
+        [EmvSpecification(62, IsParent = true)]
         [ValidateObject]
         public MerchantAdditionalData AdditionalData { get; set; }
 
         /// <summary>
         /// Merchant Name and potentially other merchant related information in an alternate language, typically the local language.
         /// </summary>
-        [EmvSpecification(64)]
+        [EmvSpecification(64, IsParent = true)]
         [ValidateObject]
         public MerchantInfoLanguageTemplate MerchantInformation { get; set; }
 
@@ -152,6 +150,7 @@ namespace StandardizedQR
         /// <value>
         /// The unreserved template.
         /// </value>
+        [EmvSpecification(91, IsParent = true)]
         [ValidateObject]
         public MerchantUnreservedDictionary UnreservedTemplate { get; set; }
 
@@ -161,8 +160,41 @@ namespace StandardizedQR
         [EmvSpecification(63, MaxLength = 4)]
         [MaxLength(4)]
         [RequireIso8859]
-        public string CRC { get; private set; }
+        public string CRC { get; internal set; }
 
+        /// <summary>
+        /// Generates the EMV(R) compliant payload that can be written into a QR code.
+        /// </summary>
+        /// <returns>Returns a <see cref="string"/> that contains the payload that can be written into a QR code.</returns>
+        /// <exception cref="InvalidOperationException">If the payload fails validation.</exception>
+        public string GeneratePayload()
+        {
+            var validationContext = new ValidationContext(this);
+            var errors = Validate(validationContext);
+            if (errors.Any())
+            {
+                var errorMessageBuilder = new StringBuilder();
+                errorMessageBuilder.AppendLine(LibraryResources.ValidationError);
+
+                foreach (var item in errors)
+                {
+                    errorMessageBuilder.AppendLine(item.ErrorMessage);
+                }
+
+                throw new InvalidOperationException(errorMessageBuilder.ToString());
+            }
+
+            var payload = new MerchantEncoder().GeneratePayload(this);
+            return payload;
+        }
+
+        /// <summary>
+        /// Determines whether the specified object is valid.
+        /// </summary>
+        /// <param name="validationContext">The validation context.</param>
+        /// <returns>
+        /// A collection that holds failed-validation information.
+        /// </returns>
         public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
         {
             if (_validating)
@@ -211,7 +243,7 @@ namespace StandardizedQR
                     }
                 }
 
-                if (null != MerchantAccountInformation)
+                if (null != MerchantAccountInformation && 1 <= MerchantAccountInformation.Count)
                 {
                     var invalidIdentifiers = MerchantAccountInformation.Keys.Count(k => k < 26 || k > 51);
                     if (0 < invalidIdentifiers)
@@ -219,192 +251,16 @@ namespace StandardizedQR
                         errors.Add(new ValidationResult(LibraryResources.MerchantAccountInformationInvalidIdentifier, new string[] { nameof(MerchantAccountInformation) }));
                     }
                 }
+                else
+                {
+                    errors.Add(new ValidationResult(LibraryResources.MerchantAccountInformationIsRequired, new string[] { nameof(MerchantAccountInformation) }));
+                }
 
                 return errors;
             }
             finally
             {
                 _validating = false;
-            }
-        }
-
-        public string GeneratePayload()
-        {
-            var validationContext = new ValidationContext(this);
-            var errors = Validate(validationContext);
-            if (errors.Any())
-            {
-                var errorMessageBuilder = new StringBuilder();
-                errorMessageBuilder.AppendLine(LibraryResources.ValidationError);
-
-                foreach (var item in errors)
-                {
-                    errorMessageBuilder.AppendLine(item.ErrorMessage);
-                }
-
-                throw new InvalidOperationException(errorMessageBuilder.ToString());
-            }
-
-            var sb = new StringBuilder();
-            sb.Append(EncodeProperty(nameof(PayloadFormatIndicator), PayloadFormatIndicator));
-            sb.Append(EncodeProperty(nameof(PointOfInitializationMethod), PointOfInitializationMethod));
-
-            if (null != MerchantAccountInformation)
-            {
-                foreach (var merchantAccountInfo in MerchantAccountInformation)
-                {
-                    var merchantInfoBuilder = new StringBuilder();
-
-                    merchantInfoBuilder.Append(EncodeProperty(typeof(MerchantAccountInformation).GetProperty("GlobalUniqueIdentifier"), merchantAccountInfo.Value.GlobalUniqueIdentifier));
-                    foreach (var paymentNetworkItem in merchantAccountInfo.Value.PaymentNetworkSpecific)
-                    {
-                        merchantInfoBuilder.Append(EncodeKeyPair(paymentNetworkItem.Key, paymentNetworkItem.Value));
-                    }
-
-                    sb.AppendFormat("{0:D2}{1:D2}{2}", merchantAccountInfo.Key, merchantInfoBuilder.Length, merchantInfoBuilder);
-                }
-            }
-
-            sb.Append(EncodeProperty(nameof(MerchantCategoryCode), MerchantCategoryCode));
-            sb.Append(EncodeProperty(nameof(CountyCode), CountyCode));
-            sb.Append(EncodeProperty(nameof(MerchantName), MerchantName));
-            sb.Append(EncodeProperty(nameof(MerchantCity), MerchantCity));
-
-            if (null != MerchantInformation)
-            {
-                var languateTemplateBuilder = new StringBuilder();
-                languateTemplateBuilder.Append(EncodeProperty(typeof(MerchantInfoLanguageTemplate).GetProperty(nameof(MerchantInfoLanguageTemplate.LanguagePreference)), MerchantInformation.LanguagePreference));
-                languateTemplateBuilder.Append(EncodeProperty(typeof(MerchantInfoLanguageTemplate).GetProperty(nameof(MerchantInfoLanguageTemplate.MerchantNameAlternateLanguage)), MerchantInformation.MerchantNameAlternateLanguage));
-                languateTemplateBuilder.Append(EncodeProperty(typeof(MerchantInfoLanguageTemplate).GetProperty(nameof(MerchantInfoLanguageTemplate.MerchantCityAlternateLanguage)), MerchantInformation.MerchantCityAlternateLanguage));
-
-                sb.Append(EncodeProperty(nameof(MerchantInformation), languateTemplateBuilder.ToString()));
-            }
-
-            sb.Append(EncodeProperty(nameof(TransactionAmount), TransactionAmount));
-            sb.Append(EncodeProperty(nameof(TransactionCurrency), TransactionCurrency));
-            sb.Append(EncodeProperty(nameof(TipOrConvenienceIndicator), TipOrConvenienceIndicator));
-            sb.Append(EncodeProperty(nameof(ValueOfConvenienceFeeFixed), ValueOfConvenienceFeeFixed));
-            sb.Append(EncodeProperty(nameof(ValueOfConvenienceFeePercentage), ValueOfConvenienceFeePercentage));
-
-            if (null != AdditionalData)
-            {
-                var additionalDataBuilder = new StringBuilder();
-                additionalDataBuilder.Append(EncodeProperty(typeof(MerchantAdditionalData).GetProperty(nameof(AdditionalData.BillNumber)), AdditionalData.BillNumber));
-                additionalDataBuilder.Append(EncodeProperty(typeof(MerchantAdditionalData).GetProperty(nameof(AdditionalData.MobileNumber)), AdditionalData.MobileNumber));
-                additionalDataBuilder.Append(EncodeProperty(typeof(MerchantAdditionalData).GetProperty(nameof(AdditionalData.StoreLabel)), AdditionalData.StoreLabel));
-                additionalDataBuilder.Append(EncodeProperty(typeof(MerchantAdditionalData).GetProperty(nameof(AdditionalData.LoyaltyNumber)), AdditionalData.LoyaltyNumber));
-                additionalDataBuilder.Append(EncodeProperty(typeof(MerchantAdditionalData).GetProperty(nameof(AdditionalData.ReferenceLabel)), AdditionalData.ReferenceLabel));
-                additionalDataBuilder.Append(EncodeProperty(typeof(MerchantAdditionalData).GetProperty(nameof(AdditionalData.CustomerLabel)), AdditionalData.CustomerLabel));
-                additionalDataBuilder.Append(EncodeProperty(typeof(MerchantAdditionalData).GetProperty(nameof(AdditionalData.TerminalLabel)), AdditionalData.TerminalLabel));
-                additionalDataBuilder.Append(EncodeProperty(typeof(MerchantAdditionalData).GetProperty(nameof(AdditionalData.PurposeOfTransaction)), AdditionalData.PurposeOfTransaction));
-                additionalDataBuilder.Append(EncodeProperty(typeof(MerchantAdditionalData).GetProperty(nameof(AdditionalData.AdditionalConsumerDataRequest)), AdditionalData.AdditionalConsumerDataRequest));
-
-                sb.Append(EncodeProperty(nameof(AdditionalData), additionalDataBuilder.ToString()));
-            }
-
-            if (null != UnreservedTemplate)
-            {
-                foreach (var unreservedTemplateItem in UnreservedTemplate)
-                {
-                    var merchantInfoBuilder = new StringBuilder();
-
-                    merchantInfoBuilder.Append(EncodeProperty(typeof(MerchantAccountInformation).GetProperty("GlobalUniqueIdentifier"), unreservedTemplateItem.Value.GlobalUniqueIdentifier));
-                    foreach (var dataItem in unreservedTemplateItem.Value.ContextSpecificData)
-                    {
-                        merchantInfoBuilder.Append(EncodeKeyPair(dataItem.Key, dataItem.Value));
-                    }
-
-                    sb.AppendFormat("{0:D2}{1:D2}{2}", unreservedTemplateItem.Key, merchantInfoBuilder.Length, merchantInfoBuilder);
-                }
-            }
-
-            /*
-             * Add CRC
-             * 
-             * The checksum shall be calculated according to [ISO/IEC 13239] using the polynomial '1021' (hex) and initial 
-             * value 'FFFF' (hex). The data over which the checksum is calculated shall cover all data objects, including their 
-             * ID, Length and Value, to be included in the QR Code, in their respective order, as well as the ID and Length of 
-             * the CRC itself (but excluding its Value).
-             */
-            sb.Append("6304"); // {id:63}{length:04}
-            var crc16ccittFalseParameters = CrcStdParams.StandartParameters[CrcAlgorithms.Crc16CcittFalse];
-            var crc = new Crc(crc16ccittFalseParameters).ComputeHash(Encoding.UTF8.GetBytes(sb.ToString()));
-            sb.Append(crc.ToHex(true).GetLast(4));
-
-            return sb.ToString();
-        }
-
-        private string EncodeProperty<T>(string propertyName, T propertyValue)
-        {
-            var property = GetType()
-                .GetProperty(propertyName);
-
-            return EncodeProperty(property, propertyValue);
-        }
-
-        private string EncodeProperty<T>(PropertyInfo property, T propertyValue)
-        {
-            var emvSpecAttribute = (EmvSpecificationAttribute)property
-                .GetCustomAttributes(typeof(EmvSpecificationAttribute), false)
-                .First();
-
-            string id = emvSpecAttribute.Id.ToString("D2");
-            string value = EncodePropertyValue(propertyValue);
-            string length = value.Length.ToString("D2");
-
-            if (string.IsNullOrWhiteSpace(value))
-            {
-                return string.Empty;
-            }
-
-            return $"{id}{length}{value}";
-        }
-
-        private string EncodeKeyPair(int id, string value) => string.Format(CultureInfo.InvariantCulture, "{0:D2}{1:D2}{2}", id, value.Length, value);
-
-        private string EncodePropertyValue<T>(T propertyValue)
-        {
-            // Value can be  int, int?, decimal?, string or null
-            if (typeof(T) == typeof(int))
-            {
-                var intValue = (int)(object)propertyValue;
-                return intValue.ToString("D2");
-            }
-            else if (propertyValue is int?)
-            {
-                var nullableInt = propertyValue as int?;
-                if (nullableInt.HasValue)
-                {
-                    return nullableInt.Value.ToString("D2");
-                }
-                else
-                {
-                    return string.Empty;
-                }
-            }
-            else if (propertyValue is decimal?)
-            {
-                var nullableDecimal = propertyValue as decimal?;
-                if (nullableDecimal.HasValue)
-                {
-                    return nullableDecimal.Value.ToString("#.00");
-                }
-                else
-                {
-                    return string.Empty;
-                }
-            }
-            else if (propertyValue is string)
-            {
-                return propertyValue.ToString();
-            }
-            else if (propertyValue == null)
-            {
-                return string.Empty;
-            }
-            else
-            {
-                return string.Empty;
             }
         }
     }

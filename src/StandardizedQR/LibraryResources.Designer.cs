@@ -70,6 +70,15 @@ namespace StandardizedQR {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Failed to decode the QR code..
+        /// </summary>
+        internal static string FailedToDecode {
+            get {
+                return ResourceManager.GetString("FailedToDecode", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to If Tip or Convenience Indicator is set to 2, Value of Convenience Fee Fixed is required. .
         /// </summary>
         internal static string IfTipOrConvenienceIndicator2ThenDependencyRequired {
@@ -88,11 +97,29 @@ namespace StandardizedQR {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to QR data has an invalid CRC..
+        /// </summary>
+        internal static string InvalidCrc {
+            get {
+                return ResourceManager.GetString("InvalidCrc", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Merchant Account Information ID allocation must be between 26 and 51..
         /// </summary>
         internal static string MerchantAccountInformationInvalidIdentifier {
             get {
                 return ResourceManager.GetString("MerchantAccountInformationInvalidIdentifier", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to At least one Globally Unique Identifier of the Merchant Account Information node is required..
+        /// </summary>
+        internal static string MerchantAccountInformationIsRequired {
+            get {
+                return ResourceManager.GetString("MerchantAccountInformationIsRequired", resourceCulture);
             }
         }
         

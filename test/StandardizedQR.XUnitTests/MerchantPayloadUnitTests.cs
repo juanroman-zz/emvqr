@@ -7,6 +7,39 @@ namespace StandardizedQR.XUnitTests
     public class MerchantPayloadUnitTests
     {
         [Fact]
+        public void DecodeQR()
+        {
+            var qrData = "00020101021229300012D156000000000510A93FO3230Q31280012D15600000001030812345678520441115802CN5914BEST TRANSPORT6007BEIJING64200002ZH0104最佳运输0202北京540523.7253031565502016233030412340603***0708A60086670902ME91320016A0112233449988770708123456786304A13A";
+            var payload = MerchantPayload.FromQR(qrData);
+
+            Assert.Equal(1, payload.PayloadFormatIndicator);
+            Assert.Equal(12, payload.PointOfInitializationMethod);
+            Assert.Equal("A13A", payload.CRC);
+            Assert.Equal(4111, payload.MerchantCategoryCode);
+            Assert.Equal("CN", payload.CountyCode);
+            Assert.Equal(23.72m, payload.TransactionAmount);
+            Assert.Equal(156, payload.TransactionCurrency);
+            Assert.Equal(1, payload.TipOrConvenienceIndicator);
+
+            Assert.Equal("D15600000000", payload.MerchantAccountInformation[29].GlobalUniqueIdentifier);
+            Assert.Equal("A93FO3230Q", payload.MerchantAccountInformation[29].PaymentNetworkSpecific[5]);
+            Assert.Equal("D15600000001", payload.MerchantAccountInformation[31].GlobalUniqueIdentifier);
+            Assert.Equal("12345678", payload.MerchantAccountInformation[31].PaymentNetworkSpecific[3]);
+
+            Assert.Equal("ZH", payload.MerchantInformation.LanguagePreference);
+            Assert.Equal("最佳运输", payload.MerchantInformation.MerchantNameAlternateLanguage);
+            Assert.Equal("北京", payload.MerchantInformation.MerchantCityAlternateLanguage);
+
+            Assert.Equal("1234", payload.AdditionalData.StoreLabel);
+            Assert.Equal("***", payload.AdditionalData.CustomerLabel);
+            Assert.Equal("A6008667", payload.AdditionalData.TerminalLabel);
+            Assert.Equal("ME", payload.AdditionalData.AdditionalConsumerDataRequest);
+
+            Assert.Equal("A011223344998877", payload.UnreservedTemplate[91].GlobalUniqueIdentifier);
+            Assert.Equal("12345678", payload.UnreservedTemplate[91].ContextSpecificData[7]);
+        }
+
+        [Fact]
         public void PayloadWithSpecificationSample()
         {
             var merchantPayload = new MerchantPayload

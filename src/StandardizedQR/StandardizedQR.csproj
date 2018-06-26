@@ -1,12 +1,15 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
-    <Authors>Juan Roman Escamilla</Authors>
+    <Authors>juanroman</Authors>
     <Company>Juan Roman Escamilla</Company>
     <Product>Standardized QR Library</Product>
-    <Description>Standardized QR Library for the EMV standard based in .NET Standard</Description>
+    <Description>EMV(R) Compliant Library built in .NET Standard for generating and parsing QR Codes.</Description>
     <PackageProjectUrl>https://github.com/juanroman/emvqr</PackageProjectUrl>
+    <Copyright>Copyright (C) 2018 Juan Roman Escamilla</Copyright>
+    <PackageLicenseUrl>https://raw.githubusercontent.com/juanroman/emvqr/master/README.md</PackageLicenseUrl>
+    <PackageReleaseNotes />
   </PropertyGroup>
 
   <ItemGroup>

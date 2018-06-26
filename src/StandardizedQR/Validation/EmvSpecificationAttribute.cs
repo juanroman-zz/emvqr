@@ -26,5 +26,13 @@ namespace StandardizedQR.Validation
         /// The length is coded as a two-digit numeric value, with a value ranging from "01" to "99".
         /// </summary>
         public int MaxLength { get; set; }
+
+        /// <summary>
+        /// Gets or sets a value indicating whether the property represents a rood node.
+        /// </summary>
+        /// <value>
+        ///   <c>true</c> if this instance is parent; otherwise, <c>false</c>.
+        /// </value>
+        public bool IsParent { get; set; }
     }
 }
