@@ -22,7 +22,7 @@ before_build:
   # Display minimal restore text
   - cmd: dotnet restore ./src/StandardizedQR/StandardizedQR.csproj --verbosity m
 build_script:
-  - cmd: dotnet build ./src/StandardizedQR/StandardizedQR.csproj
+  - cmd: dotnet build ./src/StandardizedQR/StandardizedQR.csproj /p:Version=%APPVEYOR_BUILD_VERSION%
 after_build:
   # For once the build has completed
   - cmd: dotnet pack ./src/StandardizedQR/StandardizedQR.csproj
