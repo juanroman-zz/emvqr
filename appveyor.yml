@@ -1,0 +1,29 @@
+version: '1.0.{build}'
+image: Visual Studio 2017
+branches:
+  only:
+  - master
+init:
+  # Good practise, because Windows line endings are different from Unix/Linux ones
+  - cmd: git config --global core.autocrlf true
+install:
+  # Install repo specific stuff here
+before_build:
+  # Display .NET Core version
+  - cmd: dotnet --version
+  # Display minimal restore text
+  - cmd: dotnet restore ./src/StandardizedQR/StandardizedQR.csproj --verbosity m
+build_script:
+  - cmd: dotnet build ./src/StandardizedQR/StandardizedQR.csproj
+after_build:
+  # For once the build has completed
+clone_depth: 1
+test_script:
+  # restore packages for our unit tests
+  - cmd: dotnet restore ./test/StandardizedQR.XUnitTests/StandardizedQR.XUnitTests.csproj --verbosity m
+  # run the unit tests (requires changing into the test directory)
+  - cmd: cd test/StandardizedQR.XUnitTests
+  - cmd: dotnet StandardizedQR.XUnitTests.csproj
+on_finish :
+  # any cleanup in here
+deploy: off
