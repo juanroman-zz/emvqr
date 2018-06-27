@@ -36,6 +36,7 @@ namespace StandardizedQR.Services.Encoding
             sb.Append(EncodeProperty(nameof(MerchantPayload.CountyCode), payload.CountyCode));
             sb.Append(EncodeProperty(nameof(MerchantPayload.MerchantName), payload.MerchantName));
             sb.Append(EncodeProperty(nameof(MerchantPayload.MerchantCity), payload.MerchantCity));
+            sb.Append(EncodeProperty(nameof(MerchantPayload.PostalCode), payload.PostalCode));
 
             if (null != payload.MerchantInformation)
             {

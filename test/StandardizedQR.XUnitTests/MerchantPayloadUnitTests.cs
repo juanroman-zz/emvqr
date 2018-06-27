@@ -1,11 +1,66 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using Xunit;
 
 namespace StandardizedQR.XUnitTests
 {
     public class MerchantPayloadUnitTests
     {
+        [Fact]
+        public void FullEncodeAndDecode()
+        {
+            var globalUniqueIdentifier = Guid.NewGuid().ToString().Replace("-", string.Empty);
+            var merchantPayload = MerchantPayload
+                .CreateDynamic(globalUniqueIdentifier, 4111, Iso4217Currency.MexicoPeso.Value.NumericCode, Iso3166Countries.Mexico, "Chocolate Powder", "Mexico City")
+                .WithAlternateLanguage(Iso639Languages.SpanishCastilian, "Chocolate en Polvo", "CDMX")
+                .WithTransactionAmount(34.95m)
+                .WithTipByUser()
+                .WithAdditionalData(
+                    billNumber: "1234",
+                    mobileNumber: "5512341234",
+                    storeLabel: "The large store",
+                    loyaltyNumber: "A12341234",
+                    referenceLabel: "***",
+                    terminalLabel: "T12341",
+                    purposeOfTransaction: "We do commerce",
+                    additionalConsumerDataRequest: "AME")
+                .WithUnreservedTemplate(globalUniqueIdentifier, new Dictionary<int, string>
+                {
+                    {1, "Some value" },
+                    {2, "Another value" }
+                });
+            merchantPayload.PostalCode = "12345";
+
+            var qr = merchantPayload.GeneratePayload();
+
+            merchantPayload = MerchantPayload.FromQR(qr);
+            Assert.Equal(globalUniqueIdentifier, merchantPayload.MerchantAccountInformation.First().Value.GlobalUniqueIdentifier);
+            Assert.Equal(4111, merchantPayload.MerchantCategoryCode);
+            Assert.Equal(Iso4217Currency.MexicoPeso.Value.NumericCode, merchantPayload.TransactionCurrency);
+            Assert.Equal(Iso3166Countries.Mexico, merchantPayload.CountyCode);
+            Assert.Equal("Chocolate Powder", merchantPayload.MerchantName);
+            Assert.Equal("Mexico City", merchantPayload.MerchantCity);
+            Assert.Equal(Iso639Languages.SpanishCastilian, merchantPayload.MerchantInformation.LanguagePreference);
+            Assert.Equal("Chocolate en Polvo", merchantPayload.MerchantInformation.MerchantNameAlternateLanguage);
+            Assert.Equal("CDMX", merchantPayload.MerchantInformation.MerchantCityAlternateLanguage);
+            Assert.Equal(34.95m, merchantPayload.TransactionAmount);
+            Assert.Equal(1, merchantPayload.TipOrConvenienceIndicator);
+            Assert.Equal("1234", merchantPayload.AdditionalData.BillNumber);
+            Assert.Equal("5512341234", merchantPayload.AdditionalData.MobileNumber);
+            Assert.Equal("The large store", merchantPayload.AdditionalData.StoreLabel);
+            Assert.Equal("A12341234", merchantPayload.AdditionalData.LoyaltyNumber);
+            Assert.Equal("***", merchantPayload.AdditionalData.ReferenceLabel);
+            Assert.Equal("T12341", merchantPayload.AdditionalData.TerminalLabel);
+            Assert.Equal("We do commerce", merchantPayload.AdditionalData.PurposeOfTransaction);
+            Assert.Equal("AME", merchantPayload.AdditionalData.AdditionalConsumerDataRequest);
+            Assert.Equal(globalUniqueIdentifier, merchantPayload.UnreservedTemplate.First().Value.GlobalUniqueIdentifier);
+            Assert.Equal("Some value", merchantPayload.UnreservedTemplate.First().Value.ContextSpecificData[1]);
+            Assert.Equal("Another value", merchantPayload.UnreservedTemplate.First().Value.ContextSpecificData[2]);
+            Assert.Equal("12345", merchantPayload.PostalCode);
+            Assert.NotNull(merchantPayload.CRC);
+        }
+
         [Fact]
         public void DecodeQR()
         {

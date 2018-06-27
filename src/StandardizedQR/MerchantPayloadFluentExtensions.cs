@@ -1,4 +1,6 @@
-﻿namespace StandardizedQR
+﻿using System.Collections.Generic;
+
+namespace StandardizedQR
 {
     public static class MerchantPayloadFluentExtensions
     {
@@ -28,6 +30,21 @@
         {
             merchantPayload.TipOrConvenienceIndicator = 3;
             merchantPayload.ValueOfConvenienceFeePercentage = tipPercentage.ToString("P0").Replace(" ", string.Empty);
+
+            return merchantPayload;
+        }
+
+        public static MerchantPayload WithUnreservedTemplate(this MerchantPayload merchantPayload, string globalUniqueIdentifier, Dictionary<int, string> contextSpecificData)
+        {
+            return merchantPayload.WithUnreservedTemplate(80, globalUniqueIdentifier, contextSpecificData);
+        }
+
+        public static MerchantPayload WithUnreservedTemplate(this MerchantPayload merchantPayload, int id, string globalUniqueIdentifier, Dictionary<int,string> contextSpecificData)
+        {
+            merchantPayload.UnreservedTemplate = new MerchantUnreservedDictionary
+            {
+                { 80, new MerchantUnreservedTemplate { GlobalUniqueIdentifier = globalUniqueIdentifier, ContextSpecificData = contextSpecificData} }
+            };
 
             return merchantPayload;
         }
