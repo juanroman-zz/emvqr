@@ -8,7 +8,7 @@
     <Description>EMV(R) Compliant Library built in .NET Standard for generating and parsing QR Codes.</Description>
     <PackageProjectUrl>https://github.com/juanroman/emvqr</PackageProjectUrl>
     <Copyright>Copyright (C) 2018 Juan Roman Escamilla</Copyright>
-    <PackageLicenseUrl>https://raw.githubusercontent.com/juanroman/emvqr/master/README.md</PackageLicenseUrl>
+    <PackageLicenseUrl>https://raw.githubusercontent.com/juanroman/emvqr/master/LICENSE</PackageLicenseUrl>
     <PackageReleaseNotes />
   </PropertyGroup>
 
