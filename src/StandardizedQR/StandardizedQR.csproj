@@ -10,6 +10,7 @@
     <Copyright>Copyright (C) 2018 Juan Roman Escamilla</Copyright>
     <PackageLicenseUrl>https://raw.githubusercontent.com/juanroman/emvqr/master/README.md</PackageLicenseUrl>
     <PackageReleaseNotes />
+    <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
   </PropertyGroup>
 
   <ItemGroup>
@@ -25,6 +26,10 @@
   </ItemGroup>
 
   <ItemGroup>
+    <EmbeddedResource Update="LibraryResources.es.resx">
+      <LastGenOutput>LibraryResources.Designer.cs</LastGenOutput>
+      <Generator>ResXFileCodeGenerator</Generator>
+    </EmbeddedResource>
     <EmbeddedResource Update="LibraryResources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>LibraryResources.Designer.cs</LastGenOutput>

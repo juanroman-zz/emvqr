@@ -88,7 +88,7 @@ namespace StandardizedQR {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to If Tip or Convenience Indicator is set to 2, Value of Convenience Fee Percentage is required..
+        ///   Looks up a localized string similar to If Tip or Convenience Indicator is set to 3, Value of Convenience Fee Percentage is required..
         /// </summary>
         internal static string IfTipOrConvenienceIndicator3ThenDependencyRequired {
             get {

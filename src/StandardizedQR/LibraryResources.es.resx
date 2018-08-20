@@ -118,33 +118,33 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="CompositeValidationFailed" xml:space="preserve">
-    <value>Validation for {0} failed.</value>
+    <value>Error al validar {0}.</value>
   </data>
   <data name="FailedToDecode" xml:space="preserve">
-    <value>Failed to decode the QR code.</value>
+    <value>No se puede decodificar el código QR.</value>
   </data>
   <data name="IfTipOrConvenienceIndicator2ThenDependencyRequired" xml:space="preserve">
-    <value>If Tip or Convenience Indicator is set to 2, Value of Convenience Fee Fixed is required. </value>
+    <value>Si el valor de "Convenience Indicator" (Propina) es 2, el valor de "Convenience Fee Fixed" es requerido.</value>
   </data>
   <data name="IfTipOrConvenienceIndicator3ThenDependencyRequired" xml:space="preserve">
-    <value>If Tip or Convenience Indicator is set to 3, Value of Convenience Fee Percentage is required.</value>
+    <value>Si el valor de "Convenience Indicator" (Propina) es 3, el valor de "Convenience Fee Percentage" es requerido.</value>
   </data>
   <data name="InvalidCrc" xml:space="preserve">
-    <value>QR data has an invalid CRC.</value>
+    <value>El CRC del QR es inválido.</value>
   </data>
   <data name="MerchantAccountInformationInvalidIdentifier" xml:space="preserve">
-    <value>Merchant Account Information ID allocation must be between 26 and 51.</value>
+    <value>El Identificador del Comerciante debe ser entre 26 y 51.</value>
   </data>
   <data name="MerchantAccountInformationIsRequired" xml:space="preserve">
-    <value>At least one Globally Unique Identifier of the Merchant Account Information node is required.</value>
+    <value>Al menos un Identificador Global Único del nodo información de la cuenta del comerciante es requerido.</value>
   </data>
   <data name="PayloadFormatIndicatorMustBe1" xml:space="preserve">
-    <value>In this version of the specification, the Payload Format Indicator has the value "01".</value>
+    <value>En esta versión de la especificación, el valor de "Payload Format Indicator" debe ser "01". </value>
   </data>
   <data name="TipOrConvenienceIndicatorMustBeBetween1and3" xml:space="preserve">
-    <value>Tip or Convenience Indicator must be either 1, 2, or 3.</value>
+    <value>El indicador de Propina debe ser 1, 2, o 3.</value>
   </data>
   <data name="ValidationError" xml:space="preserve">
-    <value>The payload cannot be generated because there are validation errors.</value>
+    <value>No se puede generar la cadena debido a errores de validación.</value>
   </data>
 </root>
