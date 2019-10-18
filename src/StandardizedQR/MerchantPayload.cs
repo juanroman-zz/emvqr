@@ -245,7 +245,7 @@ namespace StandardizedQR
 
                 if (null != MerchantAccountInformation && 1 <= MerchantAccountInformation.Count)
                 {
-                    var invalidIdentifiers = MerchantAccountInformation.Keys.Count(k => k < 26 || k > 51);
+                    var invalidIdentifiers = MerchantAccountInformation.Keys.Count(k => k < 2 || k > 51);
                     if (0 < invalidIdentifiers)
                     {
                         errors.Add(new ValidationResult(LibraryResources.MerchantAccountInformationInvalidIdentifier, new string[] { nameof(MerchantAccountInformation) }));
