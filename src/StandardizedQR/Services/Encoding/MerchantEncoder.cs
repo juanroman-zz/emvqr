@@ -94,7 +94,7 @@ namespace StandardizedQR.Services.Encoding
              * ID, Length and Value, to be included in the QR Code, in their respective order, as well as the ID and Length of 
              * the CRC itself (but excluding its Value).
              */
-            sb.Append("6304"); // {id:63}{length:04}
+            sb.Append("6304"); //// {id:63}{length:04}
             var crc16ccittFalseParameters = CrcStdParams.StandartParameters[CrcAlgorithms.Crc16CcittFalse];
             var crc = new Crc(crc16ccittFalseParameters).ComputeHash(System.Text.Encoding.UTF8.GetBytes(sb.ToString()));
             sb.Append(crc.ToHex(true).GetLast(4));
@@ -115,15 +115,16 @@ namespace StandardizedQR.Services.Encoding
             var emvSpecAttribute = (EmvSpecificationAttribute)property
                 .GetCustomAttributes(typeof(EmvSpecificationAttribute), false)
                 .First();
-
-            string id = emvSpecAttribute.Id.ToString("D2");
+      
             string value = EncodePropertyValue(propertyValue);
-            string length = value.Length.ToString("D2");
-
+      
             if (string.IsNullOrWhiteSpace(value))
             {
                 return string.Empty;
             }
+            
+            string id = emvSpecAttribute.Id.ToString("D2");
+            string length = value.Length.ToString("D2");
 
             return $"{id}{length}{value}";
         }

@@ -1,14 +1,16 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Globalization;
 
 namespace StandardizedQR.Validation
 {
-    /// <summary>
-    /// Helper attribute that allows for recursive valdation using data annotations.
-    /// </summary>
-    /// <seealso cref="ValidationAttribute" />
-    public class ValidateObjectAttribute : ValidationAttribute
+  [AttributeUsage(AttributeTargets.All, AllowMultiple = false)]
+  /// <summary>
+  /// Helper attribute that allows for recursive validation using data annotations.
+  /// </summary>
+  /// <seealso cref="ValidationAttribute" />
+  public class ValidateObjectAttribute : ValidationAttribute
     {
         /// <summary>
         /// Returns true if ... is valid.

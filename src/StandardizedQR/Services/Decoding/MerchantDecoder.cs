@@ -45,6 +45,28 @@ namespace StandardizedQR.Services.Decoding
             DecodeAccountInformation(tlvs, merchantPayload);
             DecodeUnreservedTemplate(tlvs, merchantPayload);
 
+            // Before validation we can remove additional data and the merchant language template if no data for them was available.
+            // They are optional fields but if they are not populated then validation fails.
+            if (null == merchantPayload.AdditionalData.AdditionalConsumerDataRequest
+                && null == merchantPayload.AdditionalData.BillNumber
+                && null == merchantPayload.AdditionalData.CustomerLabel
+                && null == merchantPayload.AdditionalData.LoyaltyNumber
+                && null == merchantPayload.AdditionalData.MobileNumber
+                && null == merchantPayload.AdditionalData.PurposeOfTransaction
+                && null == merchantPayload.AdditionalData.ReferenceLabel
+                && null == merchantPayload.AdditionalData.StoreLabel
+                && null == merchantPayload.AdditionalData.TerminalLabel)
+            {
+                merchantPayload.AdditionalData = null;
+            }
+
+            if (null == merchantPayload.MerchantInformation.LanguagePreference
+                && null == merchantPayload.MerchantInformation.MerchantCityAlternateLanguage
+                && null == merchantPayload.MerchantInformation.MerchantNameAlternateLanguage)
+            {
+                merchantPayload.MerchantInformation = null;
+            }
+
             return merchantPayload;
         }
 
@@ -96,6 +118,11 @@ namespace StandardizedQR.Services.Decoding
                 }
                 index += 2;
 
+                if (data.Length - 4 < length)
+                {
+                  break;
+                }
+
                 var value = data.Substring(index, length);
                 index += length - 1;
 
@@ -140,22 +167,32 @@ namespace StandardizedQR.Services.Decoding
                 foreach (var tlv in merchantAccountInfoTlvs)
                 {
                     var accountInfo = new MerchantAccountInformation();
-                    var globalUniqueIdentifierTlv = tlv.ChildNodes.FirstOrDefault(t => t.Tag == 0);
-                    if (null != globalUniqueIdentifierTlv)
-                    {
-                        accountInfo.GlobalUniqueIdentifier = globalUniqueIdentifierTlv.Value;
-                    }
 
-                    var paymentNetworkSpecificTlvs = tlv.ChildNodes.Where(e => e.Tag >= 1 && e.Tag <= 99);
-                    if (paymentNetworkSpecificTlvs.Any())
+                    // Visa and MasterCard simply have card numbers in their reserved space (02 and 04 for example - Issue #2).
+                    // If there are no child nodes, then the data for this tag is not a TLV string, we could probably assume it's the GlobalUniqueIdentifier since it's a required field.
+                    if (!tlv.ChildNodes.Any())
                     {
-                        accountInfo.PaymentNetworkSpecific = new Dictionary<int, string>();
-                        foreach (var item in paymentNetworkSpecificTlvs)
+                        accountInfo.GlobalUniqueIdentifier = tlv.Value;
+                    }
+                    else
+                    {
+                        var globalUniqueIdentifierTlv = tlv.ChildNodes.FirstOrDefault(t => t.Tag == 0);
+                        if (null != globalUniqueIdentifierTlv)
                         {
-                            accountInfo.PaymentNetworkSpecific.Add(item.Tag, item.Value);
+                            accountInfo.GlobalUniqueIdentifier = globalUniqueIdentifierTlv.Value;
+
+                            var paymentNetworkSpecificTlvs = tlv.ChildNodes.Where(e => e.Tag >= 1 && e.Tag <= 99);
+                            if (paymentNetworkSpecificTlvs.Any())
+                            {
+                                accountInfo.PaymentNetworkSpecific = new Dictionary<int, string>();
+                                foreach (var item in paymentNetworkSpecificTlvs)
+                                {
+                                    accountInfo.PaymentNetworkSpecific.Add(item.Tag, item.Value);
+                                }
+                            }
                         }
                     }
-
+                    
                     merchantPayload.MerchantAccountInformation.Add(tlv.Tag, accountInfo);
                 }
             }
@@ -174,19 +211,19 @@ namespace StandardizedQR.Services.Decoding
                     if (null != globalUniqueIdentifierTlv)
                     {
                         unreservedTemplate.GlobalUniqueIdentifier = globalUniqueIdentifierTlv.Value;
-                    }
 
-                    var contextSpecificTlvs = tlv.ChildNodes.Where(e => e.Tag >= 1 && e.Tag <= 99);
-                    if (contextSpecificTlvs.Any())
-                    {
-                        unreservedTemplate.ContextSpecificData = new Dictionary<int, string>();
-                        foreach (var item in contextSpecificTlvs)
+                        var contextSpecificTlvs = tlv.ChildNodes.Where(e => e.Tag >= 1 && e.Tag <= 99);
+                        if (contextSpecificTlvs.Any())
                         {
-                            unreservedTemplate.ContextSpecificData.Add(item.Tag, item.Value);
+                            unreservedTemplate.ContextSpecificData = new Dictionary<int, string>();
+                            foreach (var item in contextSpecificTlvs)
+                            {
+                                unreservedTemplate.ContextSpecificData.Add(item.Tag, item.Value);
+                            }
                         }
-                    }
 
-                    merchantPayload.UnreservedTemplate.Add(tlv.Tag, unreservedTemplate);
+                        merchantPayload.UnreservedTemplate.Add(tlv.Tag, unreservedTemplate);
+                    }
                 }
             }
         }

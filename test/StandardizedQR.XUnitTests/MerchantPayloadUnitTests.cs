@@ -95,6 +95,115 @@ namespace StandardizedQR.XUnitTests
         }
 
         [Fact]
+        public void DecodeQR1()
+        {
+            var qrData = "0002010102110213404587173785204155326311010619815204829953039365802GH5909CIB GHANA6005ACCRA622407088656730603088656730663041437";
+            var payload = MerchantPayload.FromQR(qrData);
+
+            Assert.Equal(1, payload.PayloadFormatIndicator);
+            Assert.Equal(11, payload.PointOfInitializationMethod);
+            Assert.Equal("1437", payload.CRC);
+            Assert.Equal(8299, payload.MerchantCategoryCode);
+            Assert.Equal(936, payload.TransactionCurrency);
+            Assert.Equal("CIB GHANA", payload.MerchantName);
+            Assert.Equal("ACCRA", payload.MerchantCity);
+            Assert.Equal("GH", payload.CountyCode);
+
+            Assert.Equal("4045871737852", payload.MerchantAccountInformation[2].GlobalUniqueIdentifier);
+            Assert.Equal("532631101061981", payload.MerchantAccountInformation[4].GlobalUniqueIdentifier);
+
+            Assert.Equal("86567306", payload.AdditionalData.StoreLabel);
+            Assert.Equal("86567306", payload.AdditionalData.TerminalLabel);
+        }
+
+        [Fact]
+        public void DecodeQR2()
+        {
+            var qrData = "0002010102110213404587194150404155326311017361105204581153039365802GH5913SUSAN ALLOTEY6005ACCRA622407080407330503080407330563049EE4";
+            var payload = MerchantPayload.FromQR(qrData);
+
+            Assert.Equal(1, payload.PayloadFormatIndicator);
+            Assert.Equal(11, payload.PointOfInitializationMethod);
+            Assert.Equal("9EE4", payload.CRC);
+            Assert.Equal(5811, payload.MerchantCategoryCode);
+            Assert.Equal(936, payload.TransactionCurrency);
+            Assert.Equal("SUSAN ALLOTEY", payload.MerchantName);
+            Assert.Equal("ACCRA", payload.MerchantCity);
+            Assert.Equal("GH", payload.CountyCode);
+
+            Assert.Equal("4045871941504", payload.MerchantAccountInformation[2].GlobalUniqueIdentifier);
+            Assert.Equal("532631101736110", payload.MerchantAccountInformation[4].GlobalUniqueIdentifier);
+
+            Assert.Equal("04073305", payload.AdditionalData.StoreLabel);
+            Assert.Equal("04073305", payload.AdditionalData.TerminalLabel);
+        }
+
+        [Fact]
+        public void DecodeQR3()
+        {
+            var qrData = "0002010102110213404587568745904155326311155509945204625353039365802GH5915MAXMART LIMITED6005ACCRA62240708620037450308620037456304C913";
+            var payload = MerchantPayload.FromQR(qrData);
+
+            Assert.Equal(1, payload.PayloadFormatIndicator);
+            Assert.Equal(11, payload.PointOfInitializationMethod);
+            Assert.Equal("C913", payload.CRC);
+            Assert.Equal(6253, payload.MerchantCategoryCode);
+            Assert.Equal(936, payload.TransactionCurrency);
+            Assert.Equal("MAXMART LIMITED", payload.MerchantName);
+            Assert.Equal("ACCRA", payload.MerchantCity);
+            Assert.Equal("GH", payload.CountyCode);
+
+            Assert.Equal("4045875687459", payload.MerchantAccountInformation[2].GlobalUniqueIdentifier);
+            Assert.Equal("532631115550994", payload.MerchantAccountInformation[4].GlobalUniqueIdentifier);
+
+            Assert.Equal("62003745", payload.AdditionalData.StoreLabel);
+            Assert.Equal("62003745", payload.AdditionalData.TerminalLabel);
+        }
+
+        [Fact]
+        public void DecodeQR4()
+        {
+            var qrData = "0002010102110213404587793527804155326311019494035204529553039365802GH5915JULITET LIMITED6005ACCRA62240708324313220308324313226304A5FA";
+            var payload = MerchantPayload.FromQR(qrData);
+
+            Assert.Equal(1, payload.PayloadFormatIndicator);
+            Assert.Equal(11, payload.PointOfInitializationMethod);
+            Assert.Equal("A5FA", payload.CRC);
+            Assert.Equal(5295, payload.MerchantCategoryCode);
+            Assert.Equal(936, payload.TransactionCurrency);
+            Assert.Equal("JULITET LIMITED", payload.MerchantName);
+            Assert.Equal("ACCRA", payload.MerchantCity);
+            Assert.Equal("GH", payload.CountyCode);
+
+            Assert.Equal("4045877935278", payload.MerchantAccountInformation[2].GlobalUniqueIdentifier);
+            Assert.Equal("532631101949403", payload.MerchantAccountInformation[4].GlobalUniqueIdentifier);
+
+            Assert.Equal("32431322", payload.AdditionalData.StoreLabel);
+            Assert.Equal("32431322", payload.AdditionalData.TerminalLabel);
+        }
+
+        [Fact]
+        public void DecodeQR5()
+        {
+            var qrData = "00020101021102154382871085619335204541153039365802GH5907PANDORA6005Accra63049C22";
+            var payload = MerchantPayload.FromQR(qrData);
+
+            Assert.Equal(1, payload.PayloadFormatIndicator);
+            Assert.Equal(11, payload.PointOfInitializationMethod);
+            Assert.Equal("9C22", payload.CRC);
+            Assert.Equal(5411, payload.MerchantCategoryCode);
+            Assert.Equal(936, payload.TransactionCurrency);
+            Assert.Equal("PANDORA", payload.MerchantName);
+            Assert.Equal("Accra", payload.MerchantCity);
+            Assert.Equal("GH", payload.CountyCode);
+
+            Assert.True(payload.MerchantAccountInformation.Count == 1);
+            Assert.Equal("438287108561933", payload.MerchantAccountInformation[2].GlobalUniqueIdentifier);
+
+            Assert.Null(payload.AdditionalData);
+        }
+
+        [Fact]
         public void PayloadWithSpecificationSample()
         {
             var merchantPayload = new MerchantPayload
@@ -213,7 +322,7 @@ namespace StandardizedQR.XUnitTests
                     MerchantCity = "Mexico City",
                 };
 
-                var payload = merchantPayload.GeneratePayload();
+                merchantPayload.GeneratePayload();
             });
         }
 
@@ -245,7 +354,7 @@ namespace StandardizedQR.XUnitTests
                     MerchantCity = "Mexico City",
                 };
 
-                var payload = merchantPayload.GeneratePayload();
+                merchantPayload.GeneratePayload();
             });
         }
 
@@ -269,7 +378,7 @@ namespace StandardizedQR.XUnitTests
                     MerchantCity = "Mexico City",
                 };
 
-                var payload = merchantPayload.GeneratePayload();
+                merchantPayload.GeneratePayload();
             });
         }
 
@@ -294,7 +403,7 @@ namespace StandardizedQR.XUnitTests
                     TipOrConvenienceIndicator = 5
                 };
 
-                var payload = merchantPayload.GeneratePayload();
+                merchantPayload.GeneratePayload();
             });
         }
 
@@ -319,7 +428,7 @@ namespace StandardizedQR.XUnitTests
                     TipOrConvenienceIndicator = 2
                 };
 
-                var payload = merchantPayload.GeneratePayload();
+                merchantPayload.GeneratePayload();
             });
         }
 
@@ -344,7 +453,7 @@ namespace StandardizedQR.XUnitTests
                     TipOrConvenienceIndicator = 3
                 };
 
-                var payload = merchantPayload.GeneratePayload();
+                merchantPayload.GeneratePayload();
             });
         }
     }

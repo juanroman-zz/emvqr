@@ -2,6 +2,6 @@
 {
     public interface IPayloadEncoding<T>
     {
-        string GeneratePayload(T instance);
+        string GeneratePayload(T payload);
     }
 }
